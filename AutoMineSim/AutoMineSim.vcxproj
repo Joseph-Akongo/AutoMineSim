@@ -114,8 +114,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Joseph\bullet3\build\lib\Debug;C:\Users\Joseph\source\repos\AutoMineSim\packages\freeglut.3.2.2.v140.1.0.0\runtimes\win-x64\native\Debug;C:\Users\Joseph\source\repos\AutoMineSim\packages\glfw.3.4.0\build\native\lib\static\v143\x64;C:\Users\Joseph\source\repos\AutoMineSim\packages\glew.v140.1.12.0\build\native\lib\x64\Release;C:\Users\Joseph\source\repos\AutoMineSim\packages\glew.v140.1.12.0\build\native\lib\x64\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>BulletDynamics_Debug.lib;BulletCollision_Debug.lib;LinearMath_Debug.lib;freeglutd.lib;opengl32.lib;glfw3.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Joseph\bullet3\build\lib\Debug;C:\Users\Joseph\source\repos\AutoMineSim\packages\freeglut.3.2.2.v140.1.0.0\runtimes\win-x64\native\Debug;C:\Users\Joseph\source\repos\AutoMineSim\packages\glfw.3.4.0\build\native\lib\static\v143\x64;C:\Users\Joseph\source\repos\AutoMineSim\packages\glew.v140.1.12.0\build\native\lib\x64\Release;C:\Users\Joseph\source\repos\AutoMineSim\packages\glew.v140.1.12.0\build\native\lib\x64\Debug;C:\Users\Joseph\source\repos\AutoMineSim\packages\freeglut.3.2.2.v140.1.0.0\runtimes\win-x64\native\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>BulletDynamics_Debug.lib;BulletCollision_Debug.lib;LinearMath_Debug.lib;freeglutd.lib;opengl32.lib;glfw3.lib;glew32sd.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -139,11 +139,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

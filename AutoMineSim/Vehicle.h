@@ -1,24 +1,25 @@
-#ifndef VEHICLE_H  
-#define VEHICLE_H  
-#include "Vehicle.h"
-#include <btBulletDynamicsCommon.h>  
-#include <GL/glut.h>  
+#ifndef VEHICLE_H
+#define VEHICLE_H
 
-class Vehicle {  
-public:  
-   Vehicle(btDiscreteDynamicsWorld* world);  
-   ~Vehicle();  
-   void update();  
-   void applyThrottle(float force);  
-   void turn(float angle);  
-   void draw();  
-   btRigidBody* getBody();  // Add this method declaration
+#include <btBulletDynamicsCommon.h>
+#include <vector>
+#include <chrono>
 
-private:  
-   btRigidBody* chassis;  
-   btRaycastVehicle* vehicle;  
-   btVehicleRaycaster* raycaster;  
-   btDiscreteDynamicsWorld* world;  
-};  
+class Vehicle {
+private:
+    btRigidBody* body;
+    btVector3 targetPosition;
+    bool isMining = false;
+    std::chrono::time_point<std::chrono::steady_clock> miningStartTime;
+
+public:
+    Vehicle(btDiscreteDynamicsWorld* world);
+    void update(const std::vector<btVector3>& hazards);  // Ensure it matches Vehicle.cpp
+    void draw();
+    void setTarget(const btVector3& target);
+    void findClosestResource();
+    btRigidBody* getBody();
+    bool isCurrentlyMining();
+};
 
 #endif
