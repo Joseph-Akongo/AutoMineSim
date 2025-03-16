@@ -5,9 +5,9 @@
 #include <chrono>
 
 Vehicle::Vehicle(btDiscreteDynamicsWorld* world) {
-    btCollisionShape* shape = new btBoxShape(btVector3(1, 1, 1));  // Ensure proper shape
+    btCollisionShape* shape = new btBoxShape(btVector3(1, 1, 1));
     btDefaultMotionState* motionState = new btDefaultMotionState(
-        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 2, 0))  // Start slightly above ground
+        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0))
     );
 
     btScalar mass = 10;
@@ -18,9 +18,22 @@ Vehicle::Vehicle(btDiscreteDynamicsWorld* world) {
     body = new btRigidBody(bodyCI);
 
     body->setActivationState(DISABLE_DEACTIVATION);
-    body->setFriction(0.3f);  // Ensure it's not too sticky
-    body->setDamping(0.1f, 0.1f);  // Allow smooth movement
+    body->setFriction(0.01f);  // Reduce friction to allow movement
+    body->setDamping(0.1f, 0.1f);
+    body->setGravity(btVector3(0, -9.81, 0));
     world->addRigidBody(body);
+}
+
+void Vehicle::draw() {
+    btTransform trans;
+    body->getMotionState()->getWorldTransform(trans);
+    btVector3 pos = trans.getOrigin();
+
+    glColor3f(1.0, 0.0, 0.0);  // Red color for mining truck
+    glPushMatrix();
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    glutSolidCube(2);
+    glPopMatrix();
 }
 
 extern std::vector<btVector3> hazards;
@@ -35,11 +48,6 @@ void Vehicle::update(const std::vector<btVector3>& hazards) {
     std::cout << "Truck Position Before: " << currentPos.getX()
         << ", " << currentPos.getY()
         << ", " << currentPos.getZ() << std::endl;
-
-    if (currentPos.getY() < 0.5f) {  // If truck is below ground level
-        std::cout << "WARNING: Truck is inside the terrain!" << std::endl;
-        body->setWorldTransform(btTransform(btQuaternion(0, 0, 0, 1), btVector3(currentPos.getX(), 1, currentPos.getZ())));
-    }
 
     if (isMining) {
         auto now = std::chrono::steady_clock::now();
@@ -64,17 +72,9 @@ void Vehicle::update(const std::vector<btVector3>& hazards) {
 
     direction.normalize();
 
-    for (const auto& hazard : hazards) {
-        float distance = (currentPos - hazard).length();
-        if (distance < 5.0f) {
-            direction += btVector3(rand() % 2 - 1, 0, rand() % 2 - 1);
-            break;
-        }
-    }
-
+    // Apply a stronger force for debugging
     body->setLinearVelocity(btVector3(0, 0, 0));
-
-    btVector3 force = direction * 5.0f;
+    btVector3 force = direction * 500.0f;  // Increase force for testing
     body->applyCentralForce(force);
 
     std::cout << "Applying force: " << force.getX()
@@ -85,18 +85,6 @@ void Vehicle::update(const std::vector<btVector3>& hazards) {
     std::cout << "Truck Position After: " << newPos.getX()
         << ", " << newPos.getY()
         << ", " << newPos.getZ() << std::endl;
-}
-
-void Vehicle::draw() {
-    btTransform trans;
-    body->getMotionState()->getWorldTransform(trans);
-    btVector3 pos = trans.getOrigin();
-
-    glColor3f(1.0, 0.0, 0.0);  // Red color for mining truck
-    glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glutSolidCube(2);
-    glPopMatrix();
 }
 
 // AI searches for the closest resource

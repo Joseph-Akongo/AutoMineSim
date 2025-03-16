@@ -1,4 +1,5 @@
 #include "Simulation.h"
+#include "Vehicle.h"
 #include <iostream>
 
 // Bullet Physics components
@@ -15,19 +16,22 @@ void initBullet() {
     solver = new btSequentialImpulseConstraintSolver();
     dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfig);
 
-    dynamicsWorld->setGravity(btVector3(0, -9.81, 0));  // Ensure gravity is applied
+    dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 
     // Create the ground plane
-    btStaticPlaneShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);  // Ensure Y=0
+    btStaticPlaneShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
     btDefaultMotionState* groundMotionState = new btDefaultMotionState(
-        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0))  // Place correctly at ground level
+        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0))
     );
 
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
     btRigidBody* groundBody = new btRigidBody(groundRigidBodyCI);
-    groundBody->setFriction(0.8f);  // Ensure it doesn't block movement
+    groundBody->setFriction(0.8f);  // Increase ground friction for stability
+    groundBody->setRestitution(0.0f);  // Ensure no bouncing effect
     dynamicsWorld->addRigidBody(groundBody);
 }
+
+extern Vehicle* miningTruck;
 
 void updatePhysics() {
     if (!dynamicsWorld) {
@@ -47,9 +51,17 @@ void updatePhysics() {
                 << trans.getOrigin().getX() << ", "
                 << trans.getOrigin().getY() << ", "
                 << trans.getOrigin().getZ() << std::endl;
+
+            // If truck isn't moving, apply a small push
+            if (body == miningTruck->getBody() && trans.getOrigin().getX() == 0) {
+                std::cout << "WARNING: Truck is stuck! Applying push force.\n";
+                body->applyCentralImpulse(btVector3(5, 0, 5));  // Small push to get it moving
+            }
         }
     }
 }
+
+
 
 
 

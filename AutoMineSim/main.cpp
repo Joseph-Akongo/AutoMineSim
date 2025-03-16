@@ -8,9 +8,13 @@
 #include "Vehicle.h"
 #include "Resource.h"
 #include "UI.h"
+#include "ModelLoader.h"
 
 GLFWwindow* window;
 Vehicle* miningTruck;
+Model* miningTruckModel;
+Model* oreModel;
+Model* pitModel;
 
 const GLint WIDTH = 1280, HEIGHT = 720;
 bool truckStarted = false;  // Truck won't move until "S" is pressed
@@ -133,28 +137,28 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     setupCamera();
 
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
-
     initBullet();
     miningTruck = new Vehicle(dynamicsWorld);
     generateResources(dynamicsWorld);
     createUI();
 
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
+    // Load models
+    miningTruckModel = new Model("assets/mining_truck.obj");
+    oreModel = new Model("assets/ore.obj");
+    pitModel = new Model("assets/mining_pit.obj");
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.0f, 0.2f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window);
+        updatePhysics();
 
         if (gameRunning) {
-            updatePhysics();
             updateCamera();
             drawGround();
 
             if (truckStarted) {
-                std::cout << "Truck is moving...\n";  // Debug message
                 miningTruck->findClosestResource();
                 miningTruck->update(hazards);
                 miningTruck->draw();
@@ -163,6 +167,11 @@ int main(int argc, char** argv) {
             drawResources();
             drawHazards();
             checkMining(miningTruck);
+
+            // Draw models
+            miningTruckModel->draw();
+            oreModel->draw();
+            pitModel->draw();
         }
         else {
             renderUI();
@@ -173,9 +182,13 @@ int main(int argc, char** argv) {
     }
 
     delete miningTruck;
+    delete miningTruckModel;
+    delete oreModel;
+    delete pitModel;
     glfwTerminate();
     return 0;
 }
+
 
 
 

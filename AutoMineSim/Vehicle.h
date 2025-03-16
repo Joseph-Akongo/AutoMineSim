@@ -14,8 +14,8 @@ private:
 
 public:
     Vehicle(btDiscreteDynamicsWorld* world);
-    void update(const std::vector<btVector3>& hazards);  // Ensure it matches Vehicle.cpp
-    void draw();
+    void update(const std::vector<btVector3>& hazards);
+    void draw();  // Ensure this is declared
     void setTarget(const btVector3& target);
     void findClosestResource();
     btRigidBody* getBody();

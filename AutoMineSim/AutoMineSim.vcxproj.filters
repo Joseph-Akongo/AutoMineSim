@@ -33,6 +33,9 @@
     <ClCompile Include="Resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vehicle.h">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
