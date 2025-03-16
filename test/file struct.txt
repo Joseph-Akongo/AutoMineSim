@@ -1,0 +1,12 @@
+/AutoMineSim
+ ├── src/
+ │   ├── main.cpp        # Main entry point
+ │   ├── Simulation.cpp  # Physics world setup
+ │   ├── Vehicle.cpp     # Vehicle physics
+ │
+ ├── include/
+ │   ├── Simulation.h
+ │   ├── Vehicle.h
+ │
+ ├── lib/                # External dependencies (GLFW, GLEW, Bullet)
+ ├── AutoMineSim.sln     # Visual Studio solution
