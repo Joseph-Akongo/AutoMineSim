@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 std::vector<Resource*> resources;
+extern std::vector<btVector3> hazards;  // List of placed hazards
 
 Resource::Resource(btDiscreteDynamicsWorld* world, float x, float y, float z) {
     btCollisionShape* shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
@@ -36,6 +37,17 @@ void drawResources() {
             glutSolidCube(1);
             glPopMatrix();
         }
+    }
+}
+
+void drawHazards() {
+    glColor3f(1.0, 0.0, 0.0);  // Red color for hazards
+
+    for (const auto& hazard : hazards) {
+        glPushMatrix();
+        glTranslatef(hazard.getX(), hazard.getY(), hazard.getZ());
+        glutSolidCube(1);  // Small cube representing the hazard
+        glPopMatrix();
     }
 }
 

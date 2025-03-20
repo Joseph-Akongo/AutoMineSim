@@ -25,5 +25,6 @@ extern std::vector<Resource*> resources;
 void generateResources(btDiscreteDynamicsWorld* world);  // Generate random resources
 void drawResources();
 void checkMining(Vehicle* vehicle);  // Check if vehicle is mining a resource
+void drawHazards();
 
 #endif

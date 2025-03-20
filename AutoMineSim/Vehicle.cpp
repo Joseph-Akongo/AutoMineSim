@@ -44,10 +44,36 @@ void Vehicle::update(const std::vector<btVector3>& hazards) {
     if (!truckStarted) return;
 
     btVector3 currentPos = body->getCenterOfMassPosition();
+    bool hazardDetected = false;
+    btVector3 avoidanceForce(0, 0, 0);  // Corrected variable name
 
     std::cout << "Truck Position Before: " << currentPos.getX()
         << ", " << currentPos.getY()
         << ", " << currentPos.getZ() << std::endl;
+
+    // Check for nearby hazards
+    for (const auto& hazard : hazards) {
+        float distanceToHazard = (currentPos - hazard).length();
+
+        if (distanceToHazard < 5.0f) {  // If too close to a hazard, adjust direction
+			hazardDetected = true;
+            btVector3 avoidDirection = currentPos - hazard;
+            avoidDirection.setY(0);  // Keep movement in X-Z plane
+            avoidDirection.normalize();
+            avoidanceForce += avoidDirection * 500.0f;  // Move away
+            std::cout << "Avoiding hazard at: " << hazard.getX() << ", " << hazard.getZ() << std::endl;
+            break;
+        }
+    }
+
+	if (hazardDetected) {
+		body->applyCentralForce(avoidanceForce);
+    }
+    else {
+		btVector3 direction = targetPosition - currentPos;
+		direction.normalize();
+		body->applyTorque(direction * 500.0f);
+    }
 
     if (isMining) {
         auto now = std::chrono::steady_clock::now();

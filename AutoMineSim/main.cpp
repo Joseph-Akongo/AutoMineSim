@@ -15,9 +15,11 @@ Vehicle* miningTruck;
 Model* miningTruckModel;
 Model* oreModel;
 Model* pitModel;
+Model* terrainModel;
 
 const GLint WIDTH = 1280, HEIGHT = 720;
 bool truckStarted = false;  // Truck won't move until "S" is pressed
+std::vector<btVector3> hazards;  // Define the hazard list
 
 void startGame() {
     gameRunning = true;
@@ -28,37 +30,11 @@ void exitGame() {
     glfwSetWindowShouldClose(window, true);
 }
 
-std::vector<btVector3> hazards;  // List of placed hazards
-
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
-
-        // Convert screen coordinates to normalized device coordinates (-1 to 1)
-        float ndcX = (xpos / 1280.0f) * 2.0f - 1.0f;
-        float ndcY = 1.0f - (ypos / 720.0f) * 2.0f;
-
-        // Convert to world coordinates (assuming 80x80 world size)
-        float worldX = ndcX * 40.0f;
-        float worldZ = ndcY * 40.0f;
-
-        btVector3 hazardPosition(worldX, 0, worldZ);
-        hazards.push_back(hazardPosition);
-
-        std::cout << "Hazard placed at: " << worldX << ", " << worldZ << std::endl;
-    }
-}
-
-// Draw hazards on screen
-void drawHazards() {
-    glColor3f(0.5f, 0.5f, 0.5f);  // Gray color for hazards
-    for (const auto& hazard : hazards) {
-        glPushMatrix();
-        glTranslatef(hazard.getX(), hazard.getY(), hazard.getZ());
-        glutSolidSphere(1, 10, 10);
-        glPopMatrix();
-    }
+void loadModels() {
+    miningTruckModel = new Model("mining_truck.obj");
+    oreModel = new Model("ore.obj");
+    pitModel = new Model("mining_pit.obj");
+    //terrainModel = new Model("mine_terrain.obj");  // Load the mine site terrain
 }
 
 void processInput(GLFWwindow* window) {
@@ -131,6 +107,7 @@ bool initGLFW() {
     return true;
 }
 
+
 int main(int argc, char** argv) {
     if (!initGLFW()) return -1;
     if (!initGLEW()) return -1;
@@ -141,6 +118,7 @@ int main(int argc, char** argv) {
     miningTruck = new Vehicle(dynamicsWorld);
     generateResources(dynamicsWorld);
     createUI();
+	loadModels();
 
     // Load models
     miningTruckModel = new Model("assets/mining_truck.obj");
@@ -157,6 +135,9 @@ int main(int argc, char** argv) {
         if (gameRunning) {
             updateCamera();
             drawGround();
+			drawResources();
+			drawHazards();
+			checkMining(miningTruck);
 
             if (truckStarted) {
                 miningTruck->findClosestResource();
